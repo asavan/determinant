@@ -47,7 +47,7 @@ namespace {
     */
     BestResult who_wins(std::vector<std::vector<int>>& matrix, std::vector<bool>& digits, int step, int best1, int best2, bool need_fill_result) {
 
-        int size = matrix.size();
+        int size = (int)matrix.size();
         int size_sqr = size * size;
         BestResult answer;
 
@@ -135,7 +135,7 @@ namespace {
 
 BestResult solve_matrix(const std::vector<std::vector<int>>& matrix_) {
     std::vector<std::vector<int>> matrix = matrix_;
-    char size = matrix.size();
+    char size = (char)matrix.size();
 
     std::vector<bool> digits(size * size, false);
     int step = 0;

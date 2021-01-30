@@ -18,7 +18,7 @@ void m3()
       {0, 8, 0},
       {0, 0, 0}
     };
-    int size = matrix.size();
+    int size = (int)matrix.size();
     int size_sqr = size * size;
     for (int i = 0; i < size_sqr; ++i) {
         if (i == 4) {
@@ -39,7 +39,7 @@ void m2()
       {0, 0}
     };
 
-    int size = matrix.size();
+    int size = (int)matrix.size();
     int size_sqr = size * size;
 
     for (int i = 0; i < size_sqr; ++i) {

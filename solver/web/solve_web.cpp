@@ -16,11 +16,25 @@ namespace {
         return step % 2 == 0;
     }
 
+    inline int sign(int res) {
+        if (res < 0) {
+            return -1;
+        }
+        return 1;
+    }
+
+    inline int abs(int res) {
+        if (res < 0) {
+            return -res;
+        }
+        return res;
+    }
+
     template <char _Size>
-    short determinant(const short(&a)[_Size * _Size]);
+    short determinant(const char(&a)[_Size * _Size]);
 
     template<>
-    short determinant<3>(const short(&a)[9]) {
+    short determinant<3>(const char(&a)[9]) {
         return
             a[0] * a[4] * a[8] +
             a[6] * a[1] * a[5] +
@@ -31,13 +45,13 @@ namespace {
     }
 
     template<>
-    short determinant<2>(const short(&a)[4]) {
+    short determinant<2>(const char(&a)[4]) {
         return a[0] * a[3] - a[1] * a[2];
     }
 
 
     template <char _Size>
-    short who_wins(short(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, short best1, short best2) {
+    short who_wins(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, short best1, short best2) {
         constexpr char SIZE_SQR = _Size * _Size;
 
         if (step == SIZE_SQR) {
@@ -89,7 +103,7 @@ namespace {
     }
 
     template <char _Size>
-    BestResult next_step(short(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], char step, short best1, short best2) {
+    BestResult next_step(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], char step, short best1, short best2) {
         constexpr char SIZE_SQR = _Size * _Size;
         BestResult answer;
 
@@ -159,9 +173,9 @@ namespace {
     }
 
     template <char SIZE_SQR>
-    void intToMatrix(int matrixNum, short(&matrix)[SIZE_SQR]) {
+    void intToMatrix(int matrixNum, char(&matrix)[SIZE_SQR]) {
         for (int i = SIZE_SQR - 1; i >= 0; --i) {
-            int digit = matrixNum % 10;
+            char digit = matrixNum % 10;
             matrix[i] = digit;
             matrixNum /= 10;
         }
@@ -170,12 +184,12 @@ namespace {
     template <char _Size>
     BestResult solve_matrix_flat2_(int matrixNum) {
         constexpr char SIZE_SQR = _Size * _Size;
-        short matrix[SIZE_SQR];
+        char matrix[SIZE_SQR];
         intToMatrix(matrixNum, matrix);
         bool digits[SIZE_SQR]{};
         char step = 0;
         for (char i = 0; i < SIZE_SQR; ++i) {
-            short value = matrix[i];
+            char value = matrix[i];
             if (value != 0) {
                 ++step;
                 char index = value - 1;
@@ -199,8 +213,8 @@ int solve_matrix_web(int matrixNum) {
     BestResult res =  solve_matrix_flat2_<3>(matrixNum);
     int ans = res.i;
     ans += res.k * 10;
-    ans += res.result * 100;
-    return ans;
+    ans += abs(res.result) * 100;
+    return sign(res.result) * ans;
 }
 
 #ifdef __cplusplus

@@ -8,14 +8,14 @@ static inline char is_first(int step) {
     return step % 2 == 0;
 }
 
-static inline int sign(short res) {
+static inline char sign(short res) {
     if (res < 0) {
         return -1;
     }
     return 1;
 }
 
-static inline abs(short res) {
+static inline short abs(short res) {
     if (res < 0) {
         return -res;
     }

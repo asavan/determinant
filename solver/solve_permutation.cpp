@@ -53,7 +53,6 @@ namespace {
 
 void solve_permutation() {
     std::array<std::array<int, SIZE>, SIZE> matrix = { 0 };
-    int res = 0;
     int positive_count = 0;
     int negative_count = 0;
     int max_det_count = 0;

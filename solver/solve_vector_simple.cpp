@@ -33,7 +33,7 @@ namespace {
 
     int who_wins(std::vector<std::vector<int>>& matrix, std::vector<bool>& digits, int d, int best1, int best2) {
 
-        int size = matrix.size();
+        int size = (int)matrix.size();
         int size_sqr = size * size;
 
         if (d == size_sqr) {

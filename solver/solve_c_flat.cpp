@@ -7,10 +7,10 @@ namespace {
     static constexpr short MINUS_INF = -511;
 
     template <char _Size>
-    short determinant(const short(&a)[_Size * _Size]);
+    short determinant(const char(&a)[_Size * _Size]);
 
     template<>
-    short determinant<3>(const short(&a)[9]) {
+    short determinant<3>(const char(&a)[9]) {
         return
             a[0] * a[4] * a[8] +
             a[6] * a[1] * a[5] +
@@ -21,19 +21,19 @@ namespace {
     }
 
     template<>
-    short determinant<2>(const short(&a)[4]) {
+    short determinant<2>(const char(&a)[4]) {
         return a[0] * a[3] - a[1] * a[2];
     }
 
     template <char _SIZE_SQR>
-    void copy_matrix(const short(&src)[_SIZE_SQR], std::vector<std::vector<int>>& dst) {
+    void copy_matrix(const char(&src)[_SIZE_SQR], std::vector<std::vector<int>>& dst) {
         for (char i = 0; i < _SIZE_SQR; ++i) {
             dst[i / 3][i % 3] = src[i];
         }
     }
 
     template <char _Size>
-    short who_wins(short(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, short best1, short best2) {
+    short who_wins(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, short best1, short best2) {
         constexpr char SIZE_SQR = _Size * _Size;
 
         if (step == SIZE_SQR) {
@@ -85,7 +85,7 @@ namespace {
     }
 
     template <char _Size>
-    BestResult next_step(short(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], char step, short best1, short best2) {
+    BestResult next_step(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], char step, short best1, short best2) {
         constexpr char SIZE_SQR = _Size * _Size;
         BestResult answer;
         answer.m = std::vector<std::vector<int>>(_Size, std::vector<int>(_Size, 0));
@@ -138,14 +138,14 @@ namespace {
             throw std::invalid_argument("wrong matrix size");
         }
         constexpr char SIZE_SQR = _Size * _Size;
-        short matrix[SIZE_SQR];
+        char matrix[SIZE_SQR];
         for (char i = 0; i < SIZE_SQR; ++i) {
-            matrix[i] = matrix_[i / _Size][i % _Size];
+            matrix[i] = (char)matrix_[i / _Size][i % _Size];
         }
         bool digits[SIZE_SQR]{};
         char step = 0;
         for (char i = 0; i < SIZE_SQR; ++i) {
-            short value = matrix[i];
+            char value = matrix[i];
             if (value != 0) {
                 ++step;
                 char index = value - 1;
