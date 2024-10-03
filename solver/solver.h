@@ -1,12 +1,14 @@
 #pragma once
 #include <vector>
 #include <climits>
+#include <array>
 
 struct BestResult {
-    std::vector<std::vector<int>> m;
+    std::array<int, 9> m = {};
     int i = -1;
     int j = -1;
     int k = -1;
+    int size = 3;
     int result = INT_MAX;
     void print();
     bool is_valid() {

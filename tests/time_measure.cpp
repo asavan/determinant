@@ -1,6 +1,16 @@
 #include "../measure/measure.h"
 
 namespace {
+
+    void case1() {
+        std::vector<std::vector<int>> matrix = {
+          {0, 0},
+          {0, 0}
+        };
+
+        measure(solve_matrix_flat, "solve_matrix_flat", matrix);
+    }
+
     void case2() {
         std::vector<std::vector<int>> matrix = {
                                               {0, 0, 0},
@@ -19,7 +29,7 @@ namespace {
     }
 
 
-    int case3()
+    void case3()
     {
         std::vector<std::vector<int>> matrix = {
           {0, 0, 0},
@@ -37,7 +47,6 @@ namespace {
         measure_int(solve_vector_simple, "solve_vector_simple");
         measure_int(solve_c_array, "solve_c_array");
 
-        return 0;
     }
 
     void case4()
@@ -60,9 +69,9 @@ namespace {
     void case5()
     {
         std::vector<std::vector<int>> matrix = {
-          {0, 0, 0},
-          {0, 0, 0},
-          {0, 0, 0}
+            {0, 0, 0},
+            {0, 0, 0},
+            {0, 0, 0}
         };
 
         measure(solve_matrix_flat, "solve_matrix_flat", matrix);
@@ -72,7 +81,10 @@ namespace {
 }
 
 int main() {
-    case5();
+    case1();
+    case3();
+    for (int i = 0; i < 7; ++i) {
+        case5();
+    }
     return 0;
 }
-

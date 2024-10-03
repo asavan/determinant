@@ -1,16 +1,27 @@
 #include "solver.h"
 #include <string>
 #include <stdexcept>
+#include <bitset>
+#include <algorithm>
+
 
 namespace {
     static constexpr short INF = 512;
     static constexpr short MINUS_INF = -511;
 
+    inline int min(int a, int b) {
+        return b + ((a - b) & (a - b) >> 31);
+    }
+
+    inline int max(int a, int b) {
+        return a - ((a - b) & (a - b) >> 31);
+    }
+
     template <char _Size>
-    short determinant(const char(&a)[_Size * _Size]);
+    int determinant(const char(&a)[_Size * _Size]);
 
     template<>
-    short determinant<3>(const char(&a)[9]) {
+    int determinant<3>(const char(&a)[9]) {
         return
             a[0] * a[4] * a[8] +
             a[6] * a[1] * a[5] +
@@ -21,16 +32,88 @@ namespace {
     }
 
     template<>
-    short determinant<2>(const char(&a)[4]) {
+    int determinant<2>(const char(&a)[4]) {
         return a[0] * a[3] - a[1] * a[2];
     }
 
-    template <char _SIZE_SQR>
-    void copy_matrix(const char(&src)[_SIZE_SQR], std::vector<std::vector<int>>& dst) {
-        for (char i = 0; i < _SIZE_SQR; ++i) {
-            dst[i / 3][i % 3] = src[i];
+    template <char _Size>
+    int who_wins2(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, int best1, int best2);
+
+    template <char _Size>
+    int who_wins1(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, int best1, int best2) {
+        constexpr char SIZE_SQR = _Size * _Size;        
+        if (step == SIZE_SQR) {
+            return determinant<_Size>(matrix);
+        }        
+        bool used_first_digit = false;
+        for (unsigned char k = 0; k < SIZE_SQR; ++k) {
+            if (digits[k]) {
+                continue;
+            }
+            if (step == SIZE_SQR - 2) {
+                if (used_first_digit) {
+                    break;
+                }
+                used_first_digit = true;
+            }
+            digits[k] = true;
+            for (char i = 0; i < SIZE_SQR; ++i) {
+                if (matrix[i] != 0) {
+                    continue;
+                }
+                matrix[i] = k + 1;
+                int res = who_wins2<_Size>(matrix, digits, step + 1, best1, best2);
+                matrix[i] = 0;
+
+                if (res >= best1) {
+                    digits[k] = false;
+                    return res;
+                }
+                best2 = max(best2, res);
+            }
+            digits[k] = false;
         }
+        return best2;
     }
+
+    template <char _Size>
+    int who_wins2(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, int best1, int best2) {
+        constexpr char SIZE_SQR = _Size * _Size;
+
+        if (step == SIZE_SQR) {
+            return determinant<_Size>(matrix);
+        }
+        bool used_first_digit = false;
+        for (char k = 0; k < SIZE_SQR; ++k) {
+            if (digits[k]) {
+                continue;
+            }
+            if (step == SIZE_SQR - 2) {
+                if (used_first_digit) {
+                    break;
+                }
+                used_first_digit = true;
+            }
+            digits[k] = true;
+            for (char i = 0; i < SIZE_SQR; ++i) {
+                if (matrix[i] != 0) {
+                    continue;
+                }
+                matrix[i] = k + 1;
+                int res = who_wins1<_Size>(matrix, digits, step + 1, best1, best2);
+                matrix[i] = 0;
+                if (res <= best2) {
+                    digits[k] = false;
+                    return res;
+                }
+                best1 = min(best1, res);
+
+            }
+            digits[k] = false;
+        }
+        return best1;
+    }
+
 
     template <char _Size>
     short who_wins(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, short best1, short best2) {
@@ -41,6 +124,7 @@ namespace {
         }
 
         bool used_first_digit = false;
+        const bool is_first_step = is_first(step);
         for (char k = 0; k < SIZE_SQR; ++k) {
             if (digits[k]) {
                 continue;
@@ -59,8 +143,7 @@ namespace {
                 matrix[i] = k + 1;
                 short res = who_wins<_Size>(matrix, digits, step + 1, best1, best2);
 
-
-                if (is_first(step)) {
+                if (is_first_step) {
                     if (best2 < res) {
                         best2 = res;
                     }
@@ -73,7 +156,7 @@ namespace {
 
                 matrix[i] = 0;
 
-                if ((!is_first(step) && res <= best2) || (is_first(step) && res >= best1)) {
+                if ((!is_first_step && res <= best2) || (is_first_step && res >= best1)) {
                     digits[k] = false;
                     return res;
                 }
@@ -81,14 +164,15 @@ namespace {
             }
             digits[k] = false;
         }
-        return is_first(step) ? best2 : best1;
+        return is_first_step ? best2 : best1;
     }
 
     template <char _Size>
-    BestResult next_step(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], char step, short best1, short best2) {
+    BestResult next_step(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], char step, int best1, int best2) {
         constexpr char SIZE_SQR = _Size * _Size;
         BestResult answer;
-        answer.m = std::vector<std::vector<int>>(_Size, std::vector<int>(_Size, 0));
+        answer.size = _Size;
+        bool is_first_step = is_first(step);
 
         for (char k = 0; k < SIZE_SQR; ++k) {
             if (digits[k]) {
@@ -100,32 +184,33 @@ namespace {
                     continue;
                 }
                 matrix[i] = k + 1;
-                // int res = next_step(matrix, digits, d + 1, best1, best2, false).result;
-                short res = who_wins<_Size>(matrix, digits, step + 1, best1, best2);
-
+                // short res = who_wins<_Size>(matrix, digits, step + 1, best1, best2);;
                 bool need_feel_matrix = false;
-                if (is_first(step)) {
+                int res = 0;
+                if (is_first_step) {
+                    res = who_wins2<_Size>(matrix, digits, step + 1, best1, best2);
                     if (best2 < res) {
                         best2 = res;
                         need_feel_matrix = true;
                     }
                 }
                 else {
+                    res = who_wins1<_Size>(matrix, digits, step + 1, best1, best2);
                     if (best1 > res) {
                         best1 = res;
                         need_feel_matrix = true;
                     }
                 }
+
                 if (need_feel_matrix) {
                     answer.i = i;
                     answer.k = k;
-                    copy_matrix<SIZE_SQR>(matrix, answer.m);
+                    std::copy_n(matrix, SIZE_SQR, answer.m.begin());
                     answer.result = res;
                 }
 
                 matrix[i] = 0;
             }
-
             digits[k] = false;
         }
 
@@ -156,12 +241,10 @@ namespace {
             }
         }
 
-        short best1 = INF;
-        short best2 = MINUS_INF;
-        BestResult res = next_step<_Size>(matrix, digits, step, best1, best2);
-        return res;
+        int best1 = INF;
+        int best2 = MINUS_INF;
+        return next_step<_Size>(matrix, digits, step, best1, best2);
     }
-
 }
 
 BestResult solve_matrix_flat(const std::vector<std::vector<int>>& matrix) {
@@ -172,4 +255,8 @@ BestResult solve_matrix_flat(const std::vector<std::vector<int>>& matrix) {
         return solve_matrix_flat_<3>(matrix);
     }
     throw std::invalid_argument("wrong matrix size");
+}
+
+BestResult solve_matrix_flat2(const std::vector<std::vector<int>>& matrix) {
+    return solve_matrix_flat_<3>(matrix);
 }

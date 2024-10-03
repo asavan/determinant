@@ -17,7 +17,7 @@ namespace {
                                                   {0, 0, 0},
                                                   {0, 5, 0},
                                                   {0, 3, 0}
-                                                        };
+        };
 
         BestResult res = solve_matrix(matrix);
         test(res.result == 90);
@@ -146,6 +146,9 @@ namespace {
 
 int main()
 {
+    case1();
+    case2();
+    case3();
     case4();
     return 0;
 }

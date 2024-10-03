@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 project(determinant)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON)
 
 if (MSVC)

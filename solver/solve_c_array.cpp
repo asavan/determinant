@@ -29,10 +29,10 @@ namespace {
         return a[0][0] * a[1][1] - a[1][0] * a[0][1];
     }
 
-    void copy_matrix(const int(&src)[SIZE][SIZE], std::vector<std::vector<int>>& dst) {
+    void copy_matrix(const int(&src)[SIZE][SIZE], std::array<int, 9>& dst) {
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
-                dst[i][j] = src[i][j];
+                dst[i * SIZE + j] = src[i][j];
             }
         }
     }
@@ -84,9 +84,7 @@ namespace {
     BestResult next_step(int(&matrix)[SIZE][SIZE], bool(&digits)[SIZE_SQR], int step, int best1, int best2, bool need_fill_result) {
 
         BestResult answer;
-        if (need_fill_result) {
-            answer.m = std::vector<std::vector<int>>(SIZE, std::vector<int>(SIZE, 0));
-        }
+        answer.size = SIZE;
 
         if (step == SIZE_SQR) {
             if (need_fill_result) {

@@ -50,6 +50,7 @@ namespace {
         int size = (int)matrix.size();
         int size_sqr = size * size;
         BestResult answer;
+        answer.size = size;
 
         if (step == size_sqr) {
             int det = det_vec(matrix);
@@ -61,11 +62,11 @@ namespace {
         if (step == 0 && size == 3) {
             answer.result = 40;
             if (need_fill_result) {
-                answer.m = matrix;
+                // answer.m = matrix;
                 answer.j = 2;
                 answer.i = 2;
                 answer.k = 5;
-                answer.m[answer.i][answer.j] = answer.k;
+                answer.m[5] = answer.k;
             }
             return answer;
         }
@@ -91,7 +92,7 @@ namespace {
                                 answer.i = i;
                                 answer.j = j;
                                 answer.k = k;
-                                answer.m = matrix;
+                                // answer.m = matrix;
                             }
                             answer.result = res;
                         }
@@ -103,7 +104,7 @@ namespace {
                                 answer.i = i;
                                 answer.j = j;
                                 answer.k = k;
-                                answer.m = matrix;
+                                // answer.m = matrix;
                             }
                             answer.result = res;
                         }
@@ -117,7 +118,7 @@ namespace {
                             answer.i = i;
                             answer.j = j;
                             answer.k = k;
-                            answer.m = matrix;
+                            /// answer.m = matrix;
                         }
                         answer.result = res;
                         return answer;
