@@ -3,11 +3,17 @@
 #include <stdexcept>
 #include <bitset>
 #include <algorithm>
+#include <iostream>
+#include <cassert>
+#include <unordered_map>
 
 
 namespace {
     static constexpr short INF = 512;
     static constexpr short MINUS_INF = -511;
+    int g_count = 0;
+    int g_count2 = 0;
+    std::unordered_map<std::string_view, int> cache;
 
     inline int min(int a, int b) {
         return b + ((a - b) & (a - b) >> 31);
@@ -22,6 +28,7 @@ namespace {
 
     template<>
     int determinant<3>(const char(&a)[9]) {
+        ++g_count2;
         return
             a[0] * a[4] * a[8] +
             a[6] * a[1] * a[5] +
@@ -41,7 +48,9 @@ namespace {
 
     template <char _Size>
     int who_wins1(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, int best1, int best2) {
-        constexpr char SIZE_SQR = _Size * _Size;        
+        constexpr char SIZE_SQR = _Size * _Size; 
+        assert(best1 > best2);
+        ++g_count;
         if (step == SIZE_SQR) {
             return determinant<_Size>(matrix);
         }        
@@ -79,8 +88,17 @@ namespace {
     template <char _Size>
     int who_wins2(char(&matrix)[_Size * _Size], bool(&digits)[_Size * _Size], short step, int best1, int best2) {
         constexpr char SIZE_SQR = _Size * _Size;
-
+        assert(best1 > best2);
+        ++g_count;
         if (step == SIZE_SQR) {
+            //std::string_view key(std::begin(matrix), std::end(matrix));
+            //auto it = cache.find(key);
+            //if (it != cache.end() && it->second != 0) {
+            //    return it->second;
+            //}
+            //int temp = determinant<_Size>(matrix);
+            //cache[key] = temp;
+            //return temp;
             return determinant<_Size>(matrix);
         }
         bool used_first_digit = false;
@@ -172,7 +190,7 @@ namespace {
         constexpr char SIZE_SQR = _Size * _Size;
         BestResult answer;
         answer.size = _Size;
-        bool is_first_step = is_first(step);
+        const bool is_first_step = is_first(step);
 
         for (char k = 0; k < SIZE_SQR; ++k) {
             if (digits[k]) {
@@ -213,12 +231,14 @@ namespace {
             }
             digits[k] = false;
         }
-
+        std::cout << "gcount " << g_count << " " << g_count2 << std::endl;
         return answer;
     }
 
     template <char _Size>
     BestResult solve_matrix_flat_(const std::vector<std::vector<int>>& matrix_) {
+        g_count = 0;
+        g_count2 = 0;
         if (matrix_.size() != _Size) {
             throw std::invalid_argument("wrong matrix size");
         }
@@ -248,6 +268,8 @@ namespace {
 }
 
 BestResult solve_matrix_flat(const std::vector<std::vector<int>>& matrix) {
+    cache.clear();
+    cache.reserve(1000000);
     if (matrix.size() == 2) {
         return solve_matrix_flat_<2>(matrix);
     }
