@@ -77,14 +77,28 @@ namespace {
         measure(solve_matrix_flat, "solve_matrix_flat", matrix);
     }
 
+    void case6()
+    {
+        std::vector<std::vector<int>> matrix = {
+            {0, 0, 0},
+            {0, 0, 0},
+            {0, 0, 0}
+        };
+
+        measure(solve_md_span, "solve_md_span", matrix);
+    }
+
 
 }
 
 int main() {
     case1();
     case3();
-    for (int i = 0; i < 7; ++i) {
+    for (int i = 0; i < 3; ++i) {
         case5();
+    }
+    for (int i = 0; i < 3; ++i) {
+        case6();
     }
     return 0;
 }

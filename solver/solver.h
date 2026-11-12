@@ -28,6 +28,7 @@ void solve_permutation();
 BestResult solve_matrix(const std::vector<std::vector<int>>& matrix);
 BestResult solve_matrix_c(const std::vector<std::vector<int>>& matrix);
 BestResult solve_matrix_flat(const std::vector<std::vector<int>>& matrix);
+BestResult solve_md_span(const std::vector<std::vector<int>>& matrix);
 
 inline bool is_first(int step) {
     return step % 2 == 0;
