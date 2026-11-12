@@ -268,8 +268,8 @@ namespace {
 }
 
 BestResult solve_matrix_flat(const std::vector<std::vector<int>>& matrix) {
-    cache.clear();
-    cache.reserve(1000000);
+    // cache.clear();
+    // cache.reserve(1000000);
     if (matrix.size() == 2) {
         return solve_matrix_flat_<2>(matrix);
     }
