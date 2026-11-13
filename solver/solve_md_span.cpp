@@ -38,55 +38,10 @@ namespace {
             }
         }
     }
-
-    int who_wins(std::mdspan<int, Extents2D> matrix, bool(&digits)[SIZE_SQR], int d, int best1, int best2) {
-
-        if (d == SIZE_SQR) {
-            return determinant<SIZE>(matrix);
-        }
-
-        for (int k = 0; k < SIZE_SQR; ++k) {
-            if (digits[k]) {
-                continue;
-            }
-            digits[k] = true;
-            for (int i = 0; i < SIZE; ++i) {
-                for (int j = 0; j < SIZE; ++j) {
-                    if (matrix[i, j] != 0) {
-                        continue;
-                    }
-                    matrix[i, j] = k + 1;
-                    int res = who_wins(matrix, digits, d + 1, best1, best2);
-                    
-
-                    if (is_first(d)) {
-                        if (best2 < res) {
-                            best2 = res;
-                        }
-                    }
-                    else {
-                        if (best1 > res) {
-                            best1 = res;
-                        }
-                    }
-
-                    matrix[i, j] = 0;
-
-                    if ((!is_first(d) && res <= best2) || (is_first(d) && res >= best1)) {
-                        digits[k] = false;
-                        return res;
-                    }
-                }
-            }
-            digits[k] = false;
-        }
-        return is_first(d) ? best2 : best1;
-    }
-
+    
     BestResult next_step(std::mdspan<int, Extents2D> matrix, bool(&digits)[SIZE_SQR], int step, int best1, int best2, bool need_fill_result) {
 
         BestResult answer;
-        answer.size = SIZE;
 
         if (step == SIZE_SQR) {
             if (need_fill_result) {
@@ -126,7 +81,7 @@ namespace {
                         if (best2 < res) {
                             best2 = res;
                             answer.i = i;
-                            if (need_fill_result) {                                
+                            if (need_fill_result) {
                                 answer.j = j;
                                 answer.k = k;
                                 copy_matrix(matrix, answer.m);

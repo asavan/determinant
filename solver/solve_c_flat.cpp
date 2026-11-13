@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <iostream>
 #include <cassert>
-#include <unordered_map>
 
 
 namespace {
@@ -13,7 +12,6 @@ namespace {
     static constexpr short MINUS_INF = -511;
     int g_count = 0;
     int g_count2 = 0;
-    std::unordered_map<std::string_view, int> cache;
 
     inline int min(int a, int b) {
         return b + ((a - b) & (a - b) >> 31);
